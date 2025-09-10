@@ -33,8 +33,24 @@
 > Instale o [.NET 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) ou superior.
 > Clone este repositório.
 > Abra o terminal na pasta do projeto e execute o comando `dotnet restore` para restaurar as dependências.
+> Para que o banco de dados seja criado , execute o comando `dotnet ef migrations add InitialCreate`.
+> A saída previsa no terminal será essa:
+```
+Build started...
+Build succeeded.
+Done. To undo this action, use 'dotnet ef migrations remove'
+```
+> Execute o comando `dotnet ef database update` para criar o banco de dados.
+> A saída previsa no terminal será essa:
+```
+Build started...
+Build succeeded.
+Done.
+```
 > Execute o comando `dotnet run` para iniciar o servidor.
 > Acesse `http://localhost:5000` no seu navegador para ver a aplicação em execução.
+
+## Testando a API
 > Inicie uma sessão enviando uma requisição POST para `http://localhost:5000/api/startSession` com o seguinte corpo JSON:
 ```json
   {
