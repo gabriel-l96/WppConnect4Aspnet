@@ -1,0 +1,6 @@
+@WppConnect4Aspnet_HostAddress = http://localhost:5008
+
+GET {{WppConnect4Aspnet_HostAddress}}
+Accept: application/json
+
+###
