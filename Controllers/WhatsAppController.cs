@@ -24,7 +24,7 @@ namespace WppConnect4Aspnet.Controllers
                     return BadRequest("O ID da sessão não pode ser vazio.");
 
                 _ = _wppService.StartSessionAsync(sessionId);
-                return Accepted (new {Message = "Iniciando a sessão. Monitore o estado para obter o QR Code."});
+                return Accepted(new { Message = "Iniciando a sessão. Monitore o estado para obter o QR Code." });
             }
             catch (Exception ex)
             {
@@ -54,11 +54,12 @@ namespace WppConnect4Aspnet.Controllers
                 if (string.IsNullOrEmpty(request.SessionId) || string.IsNullOrEmpty(request.To) || string.IsNullOrEmpty(request.Message))
                     return BadRequest("Parâmetros inválidos.");
                 var result = await _wppService.SendTextMenssageAsync(request.SessionId, request.To, request.Message);
-                return Ok(result);
+                return Ok(new { Message = "Comando de envio executado com sucesso!", Data = result });
             }
             catch (Exception ex)
             {
-                return new BadRequestObjectResult(new { error = ex.Message });
+                return BadRequest(new { Message = "Erro ao enviar a mensagem", Error = ex.Message });
+                //return new BadRequestObjectResult(new { error = ex.Message });
             }
         }
         [HttpPost("stop/{sessionId}")]

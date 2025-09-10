@@ -3,6 +3,8 @@ using PuppeteerSharp;
 using WppConnect4Aspnet.Data;
 using WppConnect4Aspnet.Models;
 using System.Collections.Concurrent;
+using Microsoft.AspNetCore.Diagnostics;
+using System.Text;
 
 
 namespace WppConnect4Aspnet.Services
@@ -37,7 +39,7 @@ namespace WppConnect4Aspnet.Services
             {
                 Headless = true,
                 UserDataDir = userDataDir,
-                Args = new[] { "--no-sandbox", "--disable-setuid-sandbox" }
+                Args = new[] { "--no-sandbox", "--disable-setuid-sandbox", "--disabe-web-security", "--disable-blink-features=AutomationControlled", "--no-first-run" }
             });
             _activeBrowsers.TryAdd(sessionId, browser);
 
@@ -117,15 +119,27 @@ namespace WppConnect4Aspnet.Services
                 await StopSessionAsync(sessionId);
             }
         }
-        public async Task<object> SendTextMenssageAsync(string sessionId, string number, string message)
+        public async Task<object> SendTextMenssageAsync(string sessionId, string to, string message)
         {
-            string numberFormated = $"{number}@c.us";
+            string numberFormated = $"{to}@c.us";
+            var messageBase64 = Convert.ToBase64String(Encoding.Default.GetBytes(message));
             if (!_activePages.TryGetValue(sessionId, out var page))
             {
                 throw new InvalidOperationException($"A sessão com ID '{sessionId}' não está ativa.");
             }
-            string command = "async => WPP.chat.sendTextMessage('" + numberFormated + "', '" + message + "', { createChat: true })";
-            return await page.EvaluateFunctionAsync(command);
+            //string command = "async => WPP.chat.sendTextMessage('"+ numberFormated + "','"+ messageBase64 + "', { createChat: true })";
+            string script = @"(number, base64Text) =>{
+            const binaryString = atob(base64Text);            
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++){
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            const decodedMessage = new TextDecoder('utf-8').decode(bytes);
+WPP.chat.sendTextMessage(number, decodedMessage, { createChat: true })
+            }";
+            return await page.EvaluateFunctionAsync<object>(script, numberFormated, messageBase64);
+            //return await page.EvaluateFunctionAsync(command);
         }
 
         public async Task StopSessionAsync(string sessionId)
