@@ -1,6 +1,6 @@
-using Microsoft.EntityFrameworkCore;
 using WppConnect4Aspnet.Data;
 using WppConnect4Aspnet.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,11 +26,18 @@ builder.Services.AddDbContext<ApiDbContext>(options =>
 builder.Services.AddSingleton<IWaJsService, WaJsService>();
 builder.Services.AddSingleton<IPuppeteerWppService, PuppeteerWppService>();
 
+
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new() { Title = "WppConnect4Aspnet API", Version = "v1" });
+});
 
 var app = builder.Build();
+var wppServie = app.Services.GetRequiredService<IPuppeteerWppService>();
+await wppServie.StartSessionsFromDbAsync();
 
 using (var scope = app.Services.CreateScope())
 {

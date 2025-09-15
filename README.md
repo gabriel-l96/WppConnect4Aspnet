@@ -12,6 +12,7 @@
 | Atualização automática do QRCode                           | ✔ |
 | Enviar **texto**        | ✔ |
 | Enviar **imagem, vídeo, áudio e documentos**        | ❌ |
+| Enviar stories **imagem, vídeo, texto**        | ✔  |
 | Get **contacts, chats, groups, group members, Block List** |❌ |
 | Enviar contatos                                            |❌ |
 | Enviar stickers                                            |❌ |
@@ -20,7 +21,7 @@
 | Encaminhar mensagens                                       |❌ |
 | Receber mensagens                                          | ❌ |
 | Enviar _localicação_                                       |❌ |
-| **e muito mais**                                           | ❌ |
+| **e muito mais**                                           | ✔ |
 
 
 ## Observações
